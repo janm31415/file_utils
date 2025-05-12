@@ -70,6 +70,12 @@ namespace {
     printf("Executable path: %s\n", exepath.c_str());
     }
 
+  void test_put_get_env() {
+    fu::putenv("file_utils_test_value", "hello world!");
+    std::string value = fu::getenv("file_utils_test_value");
+    TEST_EQ_STR("hello world!", value.c_str());
+    }
+
   } // anonymous namespace
 
 void run_file_utils_tests()
@@ -77,4 +83,5 @@ void run_file_utils_tests()
   csv_write_and_read();
   test_conversions_wstring_string();
   print_executable_path();
+  test_put_get_env();
   }

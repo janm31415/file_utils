@@ -1922,15 +1922,21 @@ namespace fu
 
   FUDEF std::string getenv(const std::string& name)
     {
+    std::string out;
 #ifdef _WIN32
     std::wstring ws = fu::convert_string_to_wstring(name);
-    wchar_t* path = _wgetenv(ws.c_str());
-    if (!path)
-      return nullptr;
-    std::wstring wresult(path);
-    std::string out = fu::convert_wstring_to_string(wresult);
+    errno_t err;
+    size_t bufferSize;
+    wchar_t path[4096];
+    if (err = _wgetenv_s(&bufferSize, &path[0], 4096, ws.c_str()) != 0) {
+      return std::string();
+      }
+    else {
+      std::wstring wresult(path);
+      out = fu::convert_wstring_to_string(wresult);
+      }
 #else
-    std::string out(::getenv(name.c_str()));
+    out = ::getenv(name.c_str());
 #endif
     return out;
     }
@@ -2046,11 +2052,15 @@ namespace fu
 
   FUDEF bool csv_write(const std::vector<std::vector<std::string>>& data, const char* filename, const char* separator)
     {
-    FILE* f = fopen(filename, "w");
-    if (f == nullptr)
+    FILE* f;
+    errno_t err;
+    if ((err = fopen_s(&f, filename, "w")) != 0) {
       return false;
-    csv_write(data, f, separator);
-    fclose(f);
+      }
+    else {
+      csv_write(data, f, separator);
+      fclose(f);
+      }
     return true;
     }
 
@@ -2084,11 +2094,15 @@ namespace fu
 
   FUDEF bool csv_read(std::vector<std::vector<std::string>>& data, const char* filename, const char* separator)
     {
-    FILE* f = fopen(filename, "r");
-    if (f == nullptr)
+    FILE* f;
+    errno_t err;
+    if ((err = fopen_s(&f, filename, "r")) != 0) {
       return false;
-    csv_read(data, f, separator);
-    fclose(f);
+      }
+    else {
+      csv_read(data, f, separator);
+      fclose(f);
+      }
     return true;
     }
 
