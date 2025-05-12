@@ -1928,7 +1928,7 @@ namespace fu
     errno_t err;
     size_t bufferSize;
     wchar_t path[4096];
-    if (err = _wgetenv_s(&bufferSize, &path[0], 4096, ws.c_str()) != 0) {
+    if ((err = _wgetenv_s(&bufferSize, &path[0], 4096, ws.c_str())) != 0) {
       return std::string();
       }
     else {
