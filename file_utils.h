@@ -2052,12 +2052,17 @@ namespace fu
 
   FUDEF bool csv_write(const std::vector<std::vector<std::string>>& data, const char* filename, const char* separator)
     {
+    #ifdef _WIN32
     FILE* f;
     errno_t err;
     if ((err = fopen_s(&f, filename, "w")) != 0) {
       return false;
       }
     else {
+    #else
+      {
+      FILE* f = fopen(filename, "w");
+    #endif
       csv_write(data, f, separator);
       fclose(f);
       }
@@ -2094,12 +2099,17 @@ namespace fu
 
   FUDEF bool csv_read(std::vector<std::vector<std::string>>& data, const char* filename, const char* separator)
     {
+    #ifdef _WIN32
     FILE* f;
     errno_t err;
     if ((err = fopen_s(&f, filename, "r")) != 0) {
       return false;
       }
     else {
+    #else
+      {
+      FILE* f = fopen(filename, "r");
+    #endif
       csv_read(data, f, separator);
       fclose(f);
       }
